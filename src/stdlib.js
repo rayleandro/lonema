@@ -1,3 +1,6 @@
+// -- utility functions
+// ----------------------------------------------------- //
+
 function _flattenString(str) {
     return str.match(/\S+/g).join(' ');
 }
@@ -16,6 +19,10 @@ function charIsAllowed(ch) {
     ];
     return charsets.some(re => re.exec(ch));
 }
+
+// -- globals
+// ----------------------------------------------------- //
+
 const CONFIG = {
     onNode: true,
     onWindow: false,
@@ -31,6 +38,10 @@ const MSG = {
     ),
 }
 var readline, RL;
+
+// -- console
+// ----------------------------------------------------- //
+
 function say(msg) {
     if (CONFIG.onNode) {
         console.log(msg);
@@ -43,6 +54,10 @@ function putCmdline() {
     } else if (CONFIG.onWindow) {
    }
 }
+
+// -- game loop
+// ----------------------------------------------------- //
+
 function intro() {
 }
 
@@ -60,6 +75,9 @@ function setup() {
     } else if (CONFIG.onWindow) {
     }
 }
+
+// -- parsing
+// ----------------------------------------------------- //
 
 function parseHub(input) {
     // handling comments
@@ -87,6 +105,7 @@ function parseHub(input) {
     say(`I handled what I can so far.`);
     putCmdline();
 }
+
 function parsePhrases(input) {
 
     function isPrep(word) {
@@ -144,12 +163,9 @@ function parsePhrases(input) {
     }
     return kenList;
 }
-// (function main() {
-//     setup()
-// })()
 
-
-/* -----------  testing section -------------------- */
+// -- testing
+// ----------------------------------------------------- //
 
 (function () {
     console.log(
