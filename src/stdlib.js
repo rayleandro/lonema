@@ -79,13 +79,8 @@ function parseHub(input) {
         }
     }
 
-    // split to words, check if input's first word is o
-    const words = input.match(/\w+/g);
-    if (words[0] != 'o') {
-        say(MSG.useSentenceMarker());
-        putCmdline();
-        return false;
-    }
+    // parse possible phrases from input
+    const kenList = parsePhrases(input);
 
 
 
@@ -93,11 +88,6 @@ function parseHub(input) {
     putCmdline();
 }
 function parsePhrases(input) {
-    let  words = input.match(/\w+|[,.]+/g);
-    let kenList = [[],];
-    // depth 1: list of kens
-    // depth 2: list of phrases
-    // depth 3: list of words
 
     function isPrep(word) {
         return ['tawa','lon','kepeken','tan']
@@ -109,41 +99,50 @@ function parsePhrases(input) {
     function isStop(word) {
         return _isntNull(/[.,]/.exec(word));
     }
-    function pushNewPhrase(word, ken) {
-        ken.push([word]);
+    function withNewPhrase(word, kenList) {
+        return kenList.map(ken => ken.concat([ [word] ]));
     }
-    function pushNewEmptyPhrase(ken) {
-        ken.push([]);
+    function withNewEmpty(kenList) {
+        return kenList.map(ken => ken.concat([ [] ]));
     }
-    function lastItem(arr) {
-        return arr[arr.length - 1];
-    }
-    function pushIntoLastPhrase(word, ken) {
-        lastItem(ken).push(word);
+    function withLastPhraseHaving(word, kenList) {
+        return kenList.map(ken => {
+            const initPhrases = ken.slice(0, -1);
+            const last = ken.slice(-1);
+            const newLast = [ last[0].concat([ word ]) ];
+            return initPhrases.concat(newLast);
+        });
     }
 
-    pushNewPhrase(words.pop(), kenList[0]);
+    let words = input.match(/\w+|[,.]+/g);
+    let kenList = [[],];
+    // depth 1: list of kens
+    // depth 2: list of phrases
+    // depth 3: list of words
+    let stopInPrev = false;
+    kenList = withNewPhrase(words[0], kenList);
+    words = words.slice(1);
 
     for (w of words) {
         if (isPrep(w)) {
-            const newKens = kenList.map(ken => {
-                // prep as content word is used for current kens
-                pushIntoLastPhrase(w, ken);
-                // prep as prep is returned as new ken
-                const newKen = ken.concat();
-                pushNewPhrase(w, newKen);
-                return newKen;
-            });
-            kenList = kenList.concat(newKens);
+            if (stopInPrev) {
+                kenList = withLastPhraseHaving(w, kenList);
+            } else {
+                const newKenList = withNewPhrase(w, kenList.concat());
+                kenList = withLastPhraseHaving(w, kenList).concat(newKenList);
+            }
         } else if (isMarker(w)) {
-            kenList.forEach(ken => pushNewPhrase(w, ken));
+            kenList = withNewPhrase(w, kenList);
         } else if (isStop(w)) {
-            kenList.forEach(ken => pushNewEmptyPhrase(ken));
+            kenList = withNewEmpty(kenList);
+            stopInPrev = true;
+            continue;
         } else {
-            kenList.forEach(ken => pushIntoLastPhrase(w, ken));
+            kenList = withLastPhraseHaving(w, kenList);
         }
+        stopInPrev = false;
     }
-
+    return kenList;
 }
 // (function main() {
 //     setup()
@@ -161,6 +160,12 @@ function parsePhrases(input) {
     );
 });
 
+(function testParsing() {
+    console.log(
+        parsePhrases('o pana e ijo, tawa jan tawa soweli')
+    )
+})();
+
 (function main() {
     setup();
-})();
+});
