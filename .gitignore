@@ -1,3 +1,5 @@
 
 .DS_Store
 lonema.code-workspace
+.vscode/settings.json
+.vscode/
