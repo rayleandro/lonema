@@ -49,9 +49,9 @@ function _isArray(obj) {
 function _isNullish(x) {
    return x === undefined || x === null;
 }
-function _assert(x, name) {
-   if (x === undefined) {
-      throw new Error(`${name} is undefined!`)
+function _assert(pred, err) {
+   if (!pred) {
+      throw new Error(err);
    }
 }
 
@@ -87,7 +87,7 @@ function _validate(template, obj) {
 */
 
 function _reconstituteString(strings, values) {
-   const reconstitution = [];
+   const reconstitution: string[] = [];
    values.forEach((__, ind) => {
       reconstitution.push(strings[ind]);
       reconstitution.push(values[ind]);
@@ -175,45 +175,8 @@ if (CONFIG.onNodeConsole) {
 // --------------------------------------------------------------------------------------------- //
 
 
-const _entityValidator = {
-   descr: _isFunction,
-   long: _isFunction,
-   short: _isFunction,
-   matches: ma => ma.every(m => _isFunction(m)),
-   isObvious: [
-      k => _isNullish(k)? true : k,
-      _isBoolean,
-   ],
-};
 
-function O(obj) {
-   obj = _validate(_entityValidator, obj);
-   obj.parent = null;
-   obj.children = new Set();
-   return obj;
-}
 
-const _containerValidator = {
-   isOpaque: [
-      k => _isNullish(k)? false : k,
-      _isBoolean,
-   ],
-}
-
-function Container(obj) {
-   obj = _validate(_containerValidator, obj);
-   obj.isContainer = true;
-   return obj;
-}
-
-const _openableValidator = {
-   isOpen: [
-      k => _isNullish(k)? true : k,
-      _isBoolean,
-   ],
-}
-
-function 
 
 // -: parser
 // --------------------------------------------------------------------------------------------- //
