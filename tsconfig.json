@@ -1,0 +1,17 @@
+{
+   "compilerOptions": {
+     "module": "none",
+     "noImplicitAny": true,
+     "preserveConstEnums": true,
+     "outFile": "./lonema-tok.js",
+     "sourceMap": true,
+     "target": "es2017",
+     "strictBindCallApply": true,
+     "strictNullChecks": true,
+     "strictFunctionTypes": true,
+   },
+   "files": [
+    "./src/lonema-tok.ts",
+    "./src/testing.ts",
+   ]
+}
