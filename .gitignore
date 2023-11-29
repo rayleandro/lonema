@@ -3,3 +3,5 @@ lonema.code-workspace
 .vscode/settings.json
 .vscode/
 node_modules/
+lonema-tok.js
+lonema-tok.js.map
